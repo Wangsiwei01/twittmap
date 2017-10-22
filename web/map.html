@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  #map {
+    height: 100%;
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+</head>
+<body>
+<div>
+<form>
+<input type="text" id="searchInput">
+            <input type="button" value="Search" onclick="searchKeyword()">
+</form>
+</div>
+ <div id="map"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+var host = window.location.href;
+var markers = [];
+var infoWindow;
+
+function initMap() {
+    infoWindow = new google.maps.InfoWindow({
+        maxWidth: 350
+    });
+    fetchAll();
+}
+function fetchAll(){
+  $.get(host + "DisplayTweetsServlet", function(data){
+      if(data.length == 0)
+        alert("No Data!!!");
+      else
+        putToArray(JSON.parse(data).hits.hits);
+    });
+}
+function searchKeyword(){
+  var keyword = document.getElementById('searchInput');
+  $.get(host + "KeywordsSearchingServlet?keyword="+keyword.value, function(data){
+      if(data.length == 0)
+        alert("No Data!!!");
+      else
+        putToArray(JSON.parse(data).hits.hits);
+    });
+}
+
+  
+$(document).ready(function(){
+    $("button").click(function(){
+        $.get(host + "DisplayTweetsServlet?init=a", function(data){
+          if(data.length == 0)
+            alert("No Data!!!");
+          else
+            putToArray(JSON.parse(data).hits.hits);
+        });
+    });
+});
+
+function putToArray(data){
+  var tweets = [];
+  var field = "_source";
+    for (var i = 0; i < data.length; i++) {
+        var tweet = data[i][field];
+        var lat = tweet.location[0];
+        var lon = tweet.location[1];
+
+        var text = tweet.text;
+        var usernmae = tweet.username;
+        var datetime = tweet.date;
+        tweets.push({
+            "lat": lat
+            , "lon": lon
+            , "text": text
+            , "username": usernmae
+            , "datetime": datetime
+        });
+    }
+    
+    setMarkers(tweets);
+    drawMap();
+    
+}
+
+function setMarkers(tweets){
+  clearMarkers();
+  for(var i = 0; i < tweets.length; i++){
+    var tweet = tweets[i];
+    var location = new google.maps.LatLng(tweet.lat, tweet.lon);
+    var marker = new google.maps.Marker({
+          position: location,
+          text: tweet.text,
+        });
+    
+        marker.addListener('click', function () {
+            // InfoWindow content
+            var content = '<div id="container">' + this.text+ '</div>';
+            infoWindow.setContent(content);
+            infoWindow.open(this.get('map'), this);
+        });
+    
+      markers.push(marker);
+  }
+}
+function placeMarkerAndPanTo(latLng, map) {
+  
+	$.get(host + "DistanceServlet?lat=" + latLng.lat() + "&lon=" + latLng.lng(), function(data2){
+      if(data2.length == 0)
+        ;
+      else
+        putToArray(JSON.parse(data2).hits.hits);
+    });
+/*  var location = new google.maps.LatLng(56, 56);
+    var marker = new google.maps.Marker({
+      position: location,
+      map: map
+    });
+    map.panTo(location); */
+}
+function setOnMap(map){
+  for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+      }
+}
+
+function clearMarkers(){
+  markers = [];
+}
+
+function drawMap(){
+    var uluru = {lat: -25.363, lng: 131.044};
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 1,
+      center: uluru
+    });
+    map.addListener('click', function(e) {
+        placeMarkerAndPanTo(e.latLng, map);
+    });
+  setOnMap(map);
+}
+</script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFnK4LpoXNyMadr2W1PnvLif--q1rkpXw&callback=initMap">
+    </script>
+</body>
+</html>
+

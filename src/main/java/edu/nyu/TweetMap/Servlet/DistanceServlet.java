@@ -15,7 +15,7 @@ public class DistanceServlet extends HttpServlet {
         String lat = request.getParameter("lat");
         String lon = request.getParameter("lon");
         //String distance = request.getParameter("distance");
-        String res = Elasticsearch.ElasticFetchByDistance(lat, lon, "1000");
+        String res = Elasticsearch.ElasticFetchByDistance(lat, lon, "100");
         System.out.println("lat: " + lat);
         System.out.println("lon: " + lon);
         

@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>TwittMap</title>
+   <!-- Latest compiled and minified CSS -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+   <!-- Optional theme -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+   <!-- Latest compiled and minified JavaScript -->
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <style>
   #map {
     height: 100%;
@@ -10,14 +19,33 @@
     margin: 0;
     padding: 0;
   }
+}
 </style>
 </head>
 <body>
-<div>
-<form>
-<input type="text" id="searchInput">
+<div class="container-fluid" style=" max-width:1600px">
+
+	<div class="row" style="background-color:black;">
+		<div class="col-md-3 column">
+			<h1 class="text-left" style="color:Tomato;">TweetMap</h1>
+		</div>
+		<div class="col-md-3 column">
+			<form role="form">
+				<input type="text" id="searchInput">
             <input type="button" value="Search" onclick="searchKeyword()">
-</form>
+			</form>
+		</div>
+		<div class="col-md-6 column" style="color:Tomato;">
+							<ul>
+								<li>
+									You can use the search form to search any word. However, because of limited twitters, we recommend words like "trump", "year" and "new".
+								</li>
+								<li>
+									You also can click the map to fetch twitters around your cursor.(distance = 100km). We recommend you click around North America, Europe and India
+								</li>
+							</ul>
+		</div>
+	</div>
 </div>
  <div id="map"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -50,7 +78,7 @@ function searchKeyword(){
     });
 }
 
-  
+/*
 $(document).ready(function(){
     $("button").click(function(){
         $.get(host + "DisplayTweetsServlet?init=a", function(data){
@@ -61,8 +89,11 @@ $(document).ready(function(){
         });
     });
 });
+*/
 
 function putToArray(data){
+    if(data.length == 0)
+        alert("No Data!!!");
   var tweets = [];
   var field = "_source";
     for (var i = 0; i < data.length; i++) {
@@ -81,7 +112,7 @@ function putToArray(data){
             , "datetime": datetime
         });
     }
-    
+    //alert(tweets.length);
     setMarkers(tweets);
     drawMap();
     
@@ -133,9 +164,9 @@ function clearMarkers(){
 }
 
 function drawMap(){
-    var uluru = {lat: -25.363, lng: 131.044};
+    var uluru = {lat: 40.633607, lng: -73.954997};
     var map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 1,
+      zoom: 3,
       center: uluru
     });
     map.addListener('click', function(e) {

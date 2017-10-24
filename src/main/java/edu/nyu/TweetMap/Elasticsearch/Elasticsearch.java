@@ -49,6 +49,8 @@ public class Elasticsearch {
         try {
             //response = client.performRequest("GET", "/tweet/_search/{");
             String str = "{\n" + 
+            		"  \"from\": 0,\n"+
+            		"  \"size\": 100,\n"+
                     "  \"query\": {\n" + 
                     "    \"bool\": {\n" + 
                     "      \"must\": {\n" +                               
@@ -113,6 +115,8 @@ public class Elasticsearch {
         try {
             //response = client.performRequest("GET", "/tweet/_search/{");
             String str = "{\n" + 
+            		"  \"from\": 0,\n"+
+            		"  \"size\": 100,\n"+
                     "  \"query\": {\n" +                             
                     "   \"match_all\" : {}\n" + 
                     "  }\n" + 
